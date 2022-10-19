@@ -15,6 +15,13 @@ class _TimerPageState extends State<TimerPage> {
   Stopwatch stopwatch = Stopwatch();
   Duration time = Duration.zero;
 
+  int _tapNumber = 1;
+
+  int _H = 0;
+  int _M = 0;
+  int _S = 0;
+  int _m = 0;
+
   playAndPause(){
     if(timer != null){
       stopwatch.stop();
@@ -39,6 +46,13 @@ class _TimerPageState extends State<TimerPage> {
     if(timer != null){
       timer?.cancel();
       timer = null;
+
+       _tapNumber = 1;
+       _H = 0;
+       _M = 0;
+       _S = 0;
+       _m = 0;
+
     }
     stopwatch.reset();
     setState(() {
@@ -47,7 +61,21 @@ class _TimerPageState extends State<TimerPage> {
   }
 
   mark(){
-    // TODO 기록 저장하기
+
+    if(timer != null) {
+      ++_tapNumber;
+      _H = (time.inHours % 24);
+      _M = (time.inMinutes % 60);
+      _S = (time.inSeconds % 60);
+      _m = ((time.inMilliseconds/10).floor() % 100);
+    }
+    Text(
+      '랩{_tapNumber.toString()}    ${_H} : ${_M} : ${_S} . $_m',
+      style: TextStyle(
+        fontSize: 20,
+      ),
+    );
+
   }
 
   @override
@@ -69,15 +97,37 @@ class _TimerPageState extends State<TimerPage> {
                       fontSize: 40,
                     ),
                   ),
-                  Text(
-                      '${(time.inMilliseconds / 10).floor() % 100}',
+                  Text('${(time.inMilliseconds / 10).floor() % 100}',
                     style: TextStyle(
                       fontSize: 30,
-                    ),
-                  ),
+                    ),),
                 ],
               ),
           ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: _tapNumber,
+              itemBuilder: (BuildContext context, int _tapNumber) {
+                return Text('랩${_tapNumber}   ${_H} : ${_M} : ${_S} . $_m',
+                style: TextStyle(
+                fontSize: 20,
+                ),);
+              }
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+                itemCount: _tapNumber,
+                itemBuilder: (BuildContext context, int _tapNumber) {
+                  return Text(
+                    '${time.inHours - _H} : ${time.inMinutes - _M} : ${time.inSeconds - _S} . ${(time.inMilliseconds/10 - _m).floor() % 100}',
+                    style: TextStyle(
+                      fontSize: 20,
+                    ),);
+                }
+            ),
+          ),
+
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
